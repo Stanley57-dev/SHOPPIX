@@ -1,0 +1,70 @@
+
+{% extends "base.html" %}
+
+{% block title %}Order Confirmed | Shoppix{% endblock %}
+
+{% block content %}
+
+<section class="order-success-page">
+    <div class="container">
+
+        <div class="order-success-card">
+
+            <div class="success-icon">
+                ✓
+            </div>
+
+            <p class="section-label">SHOPPIX ORDER CONFIRMATION</p>
+
+            <h1>Thank You for Your Order!</h1>
+
+            <p class="success-message">
+                Your order has been received successfully.
+                We appreciate your shopping with Shopora.
+            </p>
+
+            <div class="order-reference">
+                <span>Order Reference</span>
+                <strong>{{ order.order_number }}</strong>
+            </div>
+
+            <div class="success-order-details">
+
+                <div>
+                    <span>Order Status</span>
+                    <strong>{{ order.get_status_display }}</strong>
+                </div>
+
+                <div>
+                    <span>Payment Status</span>
+                    <strong>{{ order.get_payment_status_display }}</strong>
+                </div>
+
+                <div>
+                    <span>Order Total</span>
+                    <strong>₦{{ order.total_amount|floatformat:2 }}</strong>
+                </div>
+
+            </div>
+
+                {% if order.payment_status == 'paid' %}
+                    <p class="payment-reminder">
+                        Your payment has been verified successfully.
+                        Thank you for shopping with Shopora!
+                    </p>
+                {% else %}
+                    <p class="payment-reminder">
+                        Your order has been received, but payment is still pending.
+                    </p>
+                {% endif %}
+
+            <a href="{% url 'product_list' %}" class="success-shopping-btn">
+                Continue Shopping
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

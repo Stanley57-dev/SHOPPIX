@@ -1,0 +1,312 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}Shopora | Discover More. Shop Smarter.{% endblock %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section class="shopora-hero">
+    <div class="container">
+        <div class="shopora-hero-main">
+            <div class="shopora-hero-content">
+                <span class="hero-eyebrow">WELCOME TO SHOPPIX</span>
+                <h1>Discover More.<br>Shop Smarter.</h1>
+                <p>
+                    Find amazing products, explore your favourite categories
+                    and enjoy a smarter shopping experience.
+                </p>
+                <a href="{% url 'product_list' %}" class="shopora-primary-btn">
+                    Start Shopping <span>→</span>
+                </a>
+
+                <div class="hero-trust">
+                    <span>✓ Great Finds</span>
+                    <span>✓ Easy Shopping</span>
+                    <span>✓ Secure Checkout</span>
+                </div>
+            </div>
+
+            <div class="shopora-hero-image">
+                {% if featured_products.0.image %}
+                    <img src="{{ featured_products.0.image.url }}"
+                         alt="{{ featured_products.0.name }}">
+                {% else %}
+                    <div class="hero-image-placeholder">
+                        <span>SHOPPIX</span>
+                        <p>Discover something amazing</p>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="hero-promo-strip">
+            <div>
+                <span class="promo-icon">🛍️</span>
+                <div>
+                    <strong>Explore Products</strong>
+                    <small>Find what you love</small>
+                </div>
+            </div>
+
+            <div>
+                <span class="promo-icon">✨</span>
+                <div>
+                    <strong>Great Finds</strong>
+                    <small>Discover more every day</small>
+                </div>
+            </div>
+
+            <div>
+                <span class="promo-icon">🚚</span>
+                <div>
+                    <strong>Delivery Options</strong>
+                    <small>Shop from anywhere</small>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!-- POPULAR CATEGORIES -->
+<section class="shopora-section" id="categories">
+    <div class="container">
+
+        <div class="shopora-section-heading">
+            <div>
+                <span class="shopora-section-label">EXPLORE SHOPORA</span>
+                <h2>Shop by Category</h2>
+                <p>Explore products from your favourite categories.</p>
+            </div>
+
+            <a href="{% url 'product_list' %}" class="section-link">
+                View All Categories →
+            </a>
+        </div>
+
+        <div class="shopora-category-grid">
+            {% for category in categories %}
+                <a href="{% url 'category_products' category.slug %}"
+                   class="shopora-category-card">
+
+                    <div class="shopora-category-image">
+                        {% if category.image %}
+                            <img src="{{ category.image.url }}"
+                                 alt="{{ category.name }}"
+                                 loading="lazy">
+                        {% else %}
+                            <span>
+                                {{ category.name|slice:":1"|upper }}
+                            </span>
+                        {% endif %}
+                    </div>
+
+                    <h3>{{ category.name }}</h3>
+                    <span class="category-explore">Explore →</span>
+                </a>
+            {% empty %}
+                <p>Categories will appear here soon.</p>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- FEATURED PRODUCTS -->
+<section class="shopora-section featured-section">
+    <div class="container">
+
+        <div class="shopora-section-heading">
+            <div>
+                <span class="shopora-section-label">HANDPICKED FOR YOU</span>
+                <h2>Featured Products</h2>
+                <p>Take a look at some of our product highlights.</p>
+            </div>
+
+            <a href="{% url 'product_list' %}" class="section-link">
+                View All Products →
+            </a>
+        </div>
+
+        <div class="shopora-product-grid">
+            {% for product in featured_products %}
+
+                <article class="shopora-product-card">
+
+                    <a href="{% url 'product_detail' product.slug %}"
+                       class="shopora-product-image">
+
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 alt="{{ product.name }}"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="shopora-product-placeholder">
+                                <span>🛍️</span>
+                                <small>No Image Available</small>
+                            </div>
+                        {% endif %}
+
+                        {% if product.discount_price %}
+                            <span class="shopora-sale-badge">SALE</span>
+                        {% endif %}
+                    </a>
+
+                    <div class="shopora-product-info">
+                        <span class="shopora-product-category">
+                            {{ product.category.name }}
+                        </span>
+
+                        <h3>
+                            <a href="{% url 'product_detail' product.slug %}">
+                                {{ product.name }}
+                            </a>
+                        </h3>
+
+                        <div class="shopora-product-price">
+                            {% if product.discount_price %}
+                                <strong>
+                                    ₦{{ product.discount_price|floatformat:2 }}
+                                </strong>
+                                <del>
+                                    ₦{{ product.price|floatformat:2 }}
+                                </del>
+                            {% else %}
+                                <strong>
+                                    ₦{{ product.price|floatformat:2 }}
+                                </strong>
+                            {% endif %}
+                        </div>
+
+                        <a href="{% url 'product_detail' product.slug %}"
+                           class="shopora-product-button">
+                            View Product →
+                        </a>
+                    </div>
+
+                </article>
+
+            {% empty %}
+                <div class="shopora-empty">
+                    <h3>Products coming soon</h3>
+                    <p>Our featured products will appear here.</p>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+</section>
+
+
+<!-- BEST OFFERS -->
+<section class="shopora-section shopora-offers-section"
+         id="best-offers">
+
+    <div class="container">
+
+        <div class="shopora-section-heading">
+            <div>
+                <span class="shopora-section-label">SPECIAL DEALS</span>
+                <h2>Best Offers</h2>
+                <p>Discover great deals on selected products.</p>
+            </div>
+
+            <a href="{% url 'product_list' %}" class="section-link">
+                Discover All Deals →
+            </a>
+        </div>
+
+        <div class="shopora-product-grid">
+
+            {% for product in best_offer_products %}
+
+                <article class="shopora-product-card">
+
+                    <a href="{% url 'product_detail' product.slug %}"
+                       class="shopora-product-image">
+
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}"
+                                 alt="{{ product.name }}"
+                                 loading="lazy">
+                        {% else %}
+                            <div class="shopora-product-placeholder">
+                                <span>🛍️</span>
+                                <small>No Image Available</small>
+                            </div>
+                        {% endif %}
+
+                        {% if product.discount_price %}
+                            <span class="shopora-sale-badge">SPECIAL OFFER</span>
+                        {% endif %}
+                    </a>
+
+                    <div class="shopora-product-info">
+                        <span class="shopora-product-category">
+                            {{ product.category.name }}
+                        </span>
+
+                        <h3>
+                            <a href="{% url 'product_detail' product.slug %}">
+                                {{ product.name }}
+                            </a>
+                        </h3>
+
+                        <div class="shopora-product-price">
+                            {% if product.discount_price %}
+                                <strong>
+                                    ₦{{ product.discount_price|floatformat:2 }}
+                                </strong>
+                                <del>
+                                    ₦{{ product.price|floatformat:2 }}
+                                </del>
+                            {% else %}
+                                <strong>
+                                    ₦{{ product.price|floatformat:2 }}
+                                </strong>
+                            {% endif %}
+                        </div>
+
+                        <a href="{% url 'product_detail' product.slug %}"
+                           class="shopora-product-button">
+                            View Product →
+                        </a>
+                    </div>
+
+                </article>
+
+            {% empty %}
+                <div class="shopora-empty">
+                    <h3>No special offers yet</h3>
+                    <p>Check back soon for exciting deals.</p>
+                    <a href="{% url 'product_list' %}">
+                        Explore Products →
+                    </a>
+                </div>
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+
+<!-- SHOPPING CALL TO ACTION -->
+<section class="shopora-bottom-banner">
+    <div class="container">
+        <div>
+            <span>YOUR NEXT GREAT FIND STARTS HERE</span>
+            <h2>Ready to discover something new?</h2>
+            <p>Explore the Shoppix collection today.</p>
+        </div>
+
+        <a href="{% url 'product_list' %}">
+            Explore All Products →
+        </a>
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,223 @@
+
+{% extends "base.html" %}
+
+{% block title %}Order Details | Shoppix{% endblock %}
+
+{% block content %}
+
+<section class="order-detail-page">
+    <div class="container">
+
+        <div class="order-detail-header">
+            <div>
+                <p class="section-label">SHOPPIX ACCOUNT</p>
+                <h1>Order Details</h1>
+                <p>View your order information and delivery progress.</p>
+            </div>
+
+            <a href="{% url 'my_orders' %}" class="back-orders-btn">
+                ← Back to My Orders
+            </a>
+        </div>
+
+        <div class="order-detail-card">
+
+            <!-- ORDER INFORMATION -->
+            <div class="order-detail-top">
+                <div>
+                    <span>Order Reference</span>
+                    <strong>{{ order.order_number }}</strong>
+                </div>
+
+                <div>
+                    <span>Order Date</span>
+                    <strong>{{ order.created_at|date:"d M Y, h:i A" }}</strong>
+                </div>
+            </div>
+
+            <!-- DELIVERY PROGRESS -->
+            <div class="delivery-progress">
+
+                <h2>Delivery Progress</h2>
+
+                {% if order.status == 'cancelled' %}
+
+                    <p class="order-cancelled">
+                        This order has been cancelled.
+                    </p>
+
+                {% else %}
+
+                    <div class="progress-steps">
+
+                        <div class="progress-step completed {% if order.status == 'pending' %}active{% endif %}">
+                            <div class="progress-dot">✓</div>
+                            <span>Pending</span>
+                        </div>
+
+                        <div class="progress-step {% if order.status == 'confirmed' or order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %} {% if order.status == 'confirmed' %}active{% endif %}">
+                            <div class="progress-dot">✓</div>
+                            <span>Confirmed</span>
+                        </div>
+
+                        <div class="progress-step {% if order.status == 'processing' or order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %} {% if order.status == 'processing' %}active{% endif %}">
+                            <div class="progress-dot">✓</div>
+                            <span>Processing</span>
+                        </div>
+
+                        <div class="progress-step {% if order.status == 'shipped' or order.status == 'delivered' %}completed{% endif %} {% if order.status == 'shipped' %}active{% endif %}">
+                            <div class="progress-dot">✓</div>
+                            <span>Shipped</span>
+                        </div>
+
+                        <div class="progress-step {% if order.status == 'delivered' %}completed active{% endif %}">
+                            <div class="progress-dot">✓</div>
+                            <span>Delivered</span>
+                        </div>
+
+                    </div>
+
+                {% endif %}
+
+            </div>
+
+            <!-- ORDER ITEMS -->
+            <div class="order-detail-section">
+
+                <h2>Products Ordered</h2>
+
+                {% for item in order.items.all %}
+
+                    <div class="order-detail-item">
+                        <div>
+                            <h3>{{ item.product_name }}</h3>
+                            <p>Quantity: {{ item.quantity }}</p>
+                            <p>Unit Price: ₦{{ item.price|floatformat:2 }}</p>
+                        </div>
+
+                        <strong>
+                            ₦{{ item.subtotal|floatformat:2 }}
+                        </strong>
+                    </div>
+
+                {% endfor %}
+
+                <div class="order-detail-total">
+                    <span>Order Total</span>
+                    <strong>₦{{ order.total_amount|floatformat:2 }}</strong>
+                </div>
+
+            </div>
+
+            <!-- DELIVERY INFORMATION -->
+            <div class="order-detail-section">
+
+                <h2>Delivery Information</h2>
+
+                <div class="delivery-information">
+
+                    <p><strong>Recipient:</strong> {{ order.full_name }}</p>
+
+                    <p><strong>Email:</strong> {{ order.email }}</p>
+
+                    <p><strong>Phone:</strong> {{ order.phone }}</p>
+
+                    <p><strong>Address:</strong> {{ order.address }}</p>
+
+                    <p><strong>City:</strong> {{ order.city }}</p>
+
+                    <p><strong>State:</strong> {{ order.state }}</p>
+
+                    <p>
+                        <strong>Delivery Method:</strong>
+                        Home Delivery
+                    </p>
+
+                    <!-- CUSTOMER'S REQUESTED DATE -->
+                    <div class="delivery-info-item">
+                        <span>Customer's Preferred Delivery Date</span>
+
+                        <strong>
+                            {% if order.requested_delivery_date %}
+                                {{ order.requested_delivery_date|date:"l, d F Y" }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <!-- SHOPORA'S ESTIMATED DATE -->
+                    <div class="delivery-info-item">
+                        <span>Shopora's Estimated Delivery Date</span>
+
+                        <strong>
+                            {% if order.estimated_delivery_date %}
+                                {{ order.estimated_delivery_date|date:"l, d F Y" }}
+                            {% else %}
+                                Awaiting confirmation
+                            {% endif %}
+                        </strong>
+                    </div>
+
+                    <!-- ACTUAL DELIVERY DATE -->
+                    <div class="delivery-info-item">
+                        <span>Actual Delivery Date</span>
+
+                        <strong>
+                            {% if order.actual_delivery_date %}
+                                {{ order.actual_delivery_date|date:"l, d F Y" }}
+                            {% elif order.status == 'delivered' %}
+                                Delivery date not recorded
+                            {% else %}
+                                Not yet delivered
+                            {% endif %}
+                        </strong>
+                    </div>
+                    <div class="delivery-info-item">
+                    <span>Delivery Date Confirmation</span>
+
+                    <strong>
+                        {{ order.get_requested_delivery_status_display }}
+                    </strong>
+                </div>
+
+                </div>
+
+            </div>
+
+            <!-- PAYMENT INFORMATION -->
+            <div class="order-detail-section">
+
+                <h2>Payment Information</h2>
+
+                <div class="payment-information">
+
+                    <p>
+                        <strong>Payment Status:</strong>
+                        {{ order.get_payment_status_display }}
+                    </p>
+
+                    <p>
+                        <strong>Payment Reference:</strong>
+                        {{ order.payment_reference|default:"Not available" }}
+                    </p>
+
+                    <p>
+                        <strong>Order Status:</strong>
+                        {{ order.get_status_display }}
+                    </p>
+
+                </div>
+
+            </div>
+
+            <a href="{% url 'my_orders' %}" class="back-orders-btn">
+                Back to My Orders
+            </a>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

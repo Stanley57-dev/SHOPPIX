@@ -1,0 +1,184 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Shopping Cart | Shoppix{% endblock %}
+
+{% block content %}
+
+<section class="cart-page">
+    <div class="container">
+
+        <!-- PAGE HEADER -->
+        <div class="cart-page-header">
+            <div>
+                <p class="section-label">SHOPPIX CHECKOUT</p>
+                <h1>My Shopping Cart</h1>
+                <p>Review your selected products before checkout.</p>
+            </div>
+
+            <a href="{% url 'product_list' %}" class="cart-continue-link">
+                ← Continue Shopping
+            </a>
+        </div>
+
+        {% if cart_items %}
+
+            <div class="cart-layout">
+
+                <!-- CART ITEMS -->
+                <div class="cart-items">
+
+                    {% for item in cart_items %}
+                        <div class="cart-item">
+
+                            <div class="cart-item-image">
+                                {% if item.product.image %}
+                                    <img src="{{ item.product.image.url }}"
+                                         alt="{{ item.product.name }}">
+                                {% else %}
+                                    <span>🛍️</span>
+                                {% endif %}
+                            </div>
+
+                            <div class="cart-item-details">
+
+                                <h3>{{ item.product.name }}</h3>
+
+                                <p>
+                                    Category: {{ item.product.category.name }}
+                                </p>
+
+                                <p>
+                                    Unit Price:
+                                    ₦{{ item.product.discount_price|default:item.product.price|floatformat:2 }}
+                                </p>
+
+                                <p>
+                                    Quantity: {{ item.quantity }}
+                                </p>
+
+                                <strong>
+                                    ₦{{ item.subtotal|floatformat:2 }}
+                                </strong>
+
+                            </div>
+
+                            <div class="cart-item-actions">
+
+                                <form method="POST"
+                                      action="{% url 'update_cart' item.product.id %}">
+                                    {% csrf_token %}
+
+                                    <label for="quantity-{{ item.product.id }}">
+                                        Update Quantity
+                                    </label>
+
+                                    <input
+                                        type="number"
+                                        id="quantity-{{ item.product.id }}"
+                                        name="quantity"
+                                        value="{{ item.quantity }}"
+                                        min="1"
+                                        max="{{ item.product.stock }}"
+                                        required
+                                    >
+
+                                    <button type="submit">
+                                        Update Cart
+                                    </button>
+                                </form>
+
+                                <form method="POST"
+                                      action="{% url 'remove_from_cart' item.product.id %}">
+                                    {% csrf_token %}
+
+                                    <button type="submit">
+                                        Remove Item
+                                    </button>
+                                </form>
+
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+
+                <!-- ORDER SUMMARY -->
+                <aside class="cart-summary">
+
+                    <h2>Order Summary</h2>
+
+                    <div class="cart-summary-row">
+                        <span>Products</span>
+                        <strong>{{ cart_items|length }}</strong>
+                    </div>
+
+                    <div class="cart-summary-row">
+                        <span>Subtotal</span>
+                        <strong>₦{{ total|floatformat:2 }}</strong>
+                    </div>
+
+                    <div class="cart-summary-row">
+                        <span>Delivery Fee</span>
+                        <strong>Calculated at checkout</strong>
+                    </div>
+
+                    <h3>
+                        <span>Total</span>
+                        <span>₦{{ total|floatformat:2 }}</span>
+                    </h3>
+
+                    <p class="cart-summary-note">
+                        Delivery charges will be added during checkout.
+                    </p>
+
+                   <a href="{% url 'product_list' %}">
+                    Continue Shopping
+                   </a>
+
+                   <a href="{% url 'checkout' %}" class="checkout-btn">
+                   Proceed to Checkout →
+               </a>
+                 
+                </aside>
+
+            </div>
+
+        {% else %}
+
+            <!-- EMPTY CART -->
+            <div class="empty-cart">
+
+                <div class="empty-cart-icon">
+                    <svg viewBox="0 0 24 24"
+                         fill="none"
+                         stroke="currentColor"
+                         stroke-width="1.7"
+                         stroke-linecap="round"
+                         stroke-linejoin="round">
+                        <circle cx="9" cy="21" r="1"></circle>
+                        <circle cx="20" cy="21" r="1"></circle>
+                        <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                    </svg>
+                </div>
+
+                <h2>Your cart is currently empty</h2>
+
+                <p>
+                    You haven't added any products yet.
+                    Explore Shopora and find something you'll love.
+                </p>
+
+                <a href="{% url 'product_list' %}">
+                    Start Shopping
+                </a>
+
+            </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

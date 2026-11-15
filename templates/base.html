@@ -1,0 +1,308 @@
+
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}Shopora | Discover More. Shop Smarter.{% endblock %}</title>
+
+    <meta name="description" content="Shopora is your online marketplace for discovering quality products at great prices.">
+
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+    <!-- ANNOUNCEMENT BAR -->
+    <div class="top-bar">
+        <div class="container top-bar-inner">
+            <span>Welcome to Shoppix</span>
+            <span>Discover more. Shop smarter.</span>
+            <span>Quality finds, great prices</span>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="site-header">
+
+        <!-- EXISTING DESKTOP HEADER - PRESERVED -->
+        <div class="container main-header">
+
+            <a href="{% url 'home' %}" class="logo">
+                Shoppix<span>.</span>
+            </a>
+
+            <form class="header-search" method="GET" action="{% url 'product_list' %}">
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="Search for products, brands and more..."
+                    aria-label="Search products"
+                    value="{{ request.GET.q|default:'' }}"
+                >
+                <button type="submit" aria-label="Search">
+                    <span>⌕</span> Search
+                </button>
+            </form>
+
+            <div class="header-actions">
+
+                <div class="header-account">
+                    <span class="header-action-icon">👤</span>
+                    <div class="header-action-text">
+                        {% if user.is_authenticated %}
+                        <small>Welcome back</small>
+                        <strong>
+                            <a href="{% url 'account_profile' %}">
+                                {{ user.username }}
+                            </a>
+                        </strong>
+                        {% else %}
+                            <small>Welcome</small>
+                            <strong>
+                                <a href="{% url 'login' %}">Sign In</a>
+                            </strong>
+                        {% endif %}
+                    </div>
+                </div>
+
+                {% if user.is_authenticated %}
+                    <form method="POST" action="{% url 'logout' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="header-logout">Logout</button>
+                    </form>
+                {% else %}
+                    <a href="{% url 'register' %}" class="header-register">
+                        Register
+                    </a>
+                {% endif %}
+
+                {% with cart_count=request.session.cart|length %}
+                    <a
+                        href="{% url 'cart_detail' %}"
+                        class="header-cart{% if request.resolver_match.url_name == 'cart_detail' %} active{% endif %}"
+                        aria-label="Shopping cart"
+                    >
+                        <span class="cart-icon">
+                            <svg viewBox="0 0 24 24"
+                                 width="23"
+                                 height="23"
+                                 fill="none"
+                                 stroke="currentColor"
+                                 stroke-width="1.8"
+                                 stroke-linecap="round"
+                                 stroke-linejoin="round"
+                                 aria-hidden="true">
+                                <circle cx="9" cy="21" r="1"></circle>
+                                <circle cx="20" cy="21" r="1"></circle>
+                                <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                            </svg>
+                        </span>
+
+                        <span class="cart-text">Cart</span>
+
+                        {% if cart_count > 0 %}
+                            <span class="cart-count">{{ cart_count }}</span>
+                        {% endif %}
+                    </a>
+                {% endwith %}
+
+            </div>
+        </div>
+
+        <!-- EXISTING DESKTOP NAVIGATION - PRESERVED -->
+        <div class="category-nav">
+            <div class="container category-nav-inner">
+
+                <a href="{% url 'product_list' %}" class="all-categories-link">
+                    ☰ All Products
+                </a>
+
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'home' %}#categories">Categories</a>
+                <a href="{% url 'product_list' %}">Shop</a>
+                <a href="{% url 'product_list' %}">Discover Products</a>
+                <a href="{% url 'home' %}#best-offers">Best Offers</a>
+               {% if user.is_authenticated %}
+    <a href="{% url 'account_profile' %}">My Account</a>
+{% endif %}
+
+<a href="{% url 'my_orders' %}">My Orders</a>
+            </div>
+        </div>
+
+        <!-- NEW MOBILE HEADER -->
+        <div class="mobile-header">
+
+            <div class="mobile-header-top">
+
+                <!-- HAMBURGER MENU -->
+                <details class="mobile-menu">
+
+                    <summary aria-label="Open navigation menu">
+                        <span class="mobile-menu-icon">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </span>
+                    </summary>
+
+                    <!-- MOBILE MENU PANEL -->
+                    <nav class="mobile-menu-panel">
+
+                        <div class="mobile-menu-heading">
+                            <strong>Shoppix Menu</strong>
+                            <span>Discover more. Shop smarter.</span>
+                        </div>
+
+                        <a href="{% url 'home' %}">Home</a>
+                        <a href="{% url 'home' %}#categories">Categories</a>
+                        <a href="{% url 'product_list' %}">All Products</a>
+                        <a href="{% url 'home' %}#best-offers">Best Offers</a>
+                        <a href="{% url 'my_orders' %}">My Orders</a>
+
+                        {% if user.is_authenticated %}
+                            <div class="mobile-menu-user">
+                                Signed in as <strong>{{ user.username }}</strong>
+                            </div>
+
+                            <form method="POST" action="{% url 'logout' %}">
+                                {% csrf_token %}
+                                <button type="submit" class="mobile-menu-logout">
+                                    Logout
+                                </button>
+                            </form>
+                        {% else %}
+                            <a href="{% url 'login' %}">Sign In</a>
+                            <a href="{% url 'register' %}">Create Account</a>
+                        {% endif %}
+
+                    </nav>
+                </details>
+
+                <!-- MOBILE LOGO -->
+                <a href="{% url 'home' %}" class="mobile-logo">
+                    Shoppix<span>.</span>
+                </a>
+
+                <!-- MOBILE CART -->
+                {% with cart_count=request.session.cart|length %}
+                    <a href="{% url 'cart_detail' %}" class="mobile-cart"
+                       aria-label="Shopping cart">
+
+                        <svg viewBox="0 0 24 24"
+                             width="25"
+                             height="25"
+                             fill="none"
+                             stroke="currentColor"
+                             stroke-width="1.8"
+                             stroke-linecap="round"
+                             stroke-linejoin="round"
+                             aria-hidden="true">
+                            <circle cx="9" cy="21" r="1"></circle>
+                            <circle cx="20" cy="21" r="1"></circle>
+                            <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path>
+                        </svg>
+
+                        {% if cart_count > 0 %}
+                            <span class="mobile-cart-count">{{ cart_count }}</span>
+                        {% endif %}
+
+                    </a>
+                {% endwith %}
+
+            </div>
+
+            <!-- MOBILE SEARCH -->
+            <form class="mobile-search" method="GET" action="{% url 'product_list' %}">
+                <input
+                    type="search"
+                    name="q"
+                    placeholder="Search products, brands and more..."
+                    aria-label="Search products"
+                    value="{{ request.GET.q|default:'' }}"
+                >
+
+                <button type="submit" aria-label="Search">
+                    ⌕
+                </button>
+            </form>
+
+        </div>
+
+    </header>
+
+    <!-- PAGE CONTENT -->
+    <main>
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="site-footer">
+
+        <div class="container footer-content">
+
+            <div class="footer-brand">
+                <a href="{% url 'home' %}" class="footer-logo">
+                    Shoppix<span>.</span>
+                </a>
+
+                <p>
+                    Discover more. Shop smarter.
+                    Your favourite products, all in one place.
+                </p>
+            </div>
+
+            <div class="footer-links">
+                <h3>Explore</h3>
+                <a href="{% url 'home' %}">Home</a>
+                <a href="{% url 'product_list' %}">All Products</a>
+                <a href="{% url 'home' %}#categories">Categories</a>
+            </div>
+
+            <div class="footer-links">
+                <h3>Your Account</h3>
+                <a href="{% url 'login' %}">Sign In</a>
+                <a href="{% url 'register' %}">Create Account</a>
+            </div>
+
+        </div>
+
+        <div class="footer-bottom">
+            <p>© 2026 Shoppix. All rights reserved.</p>
+        </div>
+
+    </footer>
+
+    <!-- MOBILE BOTTOM NAVIGATION -->
+    <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+
+        <a href="{% url 'home' %}" class="mobile-nav-item">
+            <span class="mobile-nav-icon">⌂</span>
+            <span>Home</span>
+        </a>
+
+        <a href="{% url 'home' %}#categories" class="mobile-nav-item">
+            <span class="mobile-nav-icon">▦</span>
+            <span>Categories</span>
+        </a>
+
+        <a href="{% url 'product_list' %}" class="mobile-nav-item">
+            <span class="mobile-nav-icon">⌕</span>
+            <span>Discover</span>
+        </a>
+
+        <a href="{% if user.is_authenticated %}{% url 'account_profile' %}{% else %}{% url 'login' %}{% endif %}" class="mobile-nav-item">
+    <span class="mobile-nav-icon">👤</span>
+    <span>Account</span>
+    </a>
+
+
+    </nav>
+
+</body>
+</html>

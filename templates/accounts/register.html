@@ -1,0 +1,26 @@
+
+{% extends "base.html" %}
+
+{% block title %}Create Account | Shoppix{% endblock %}
+
+{% block content %}
+<section class="auth-section">
+    <div class="auth-card">
+        <h1>Create Your Shoppix Account</h1>
+        <p>Join Shoppix and start shopping smarter.</p>
+
+        <form method="POST">
+            {% csrf_token %}
+
+            {{ form.as_p }}
+
+            <button type="submit">Create Account</button>
+        </form>
+
+        <p class="auth-link">
+            Already have an account?
+           <a href="{% url 'login' %}">Sign in</a>
+        </p>
+    </div>
+</section>
+{% endblock %}

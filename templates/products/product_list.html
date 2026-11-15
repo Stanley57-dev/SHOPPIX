@@ -1,0 +1,116 @@
+
+{% extends "base.html" %}
+
+{% block title %}
+    {% if selected_category %}
+        {{ selected_category.name }} | Shoppix
+    {% else %}
+        Shop Products | Shoppix
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+
+<section class="products-page">
+    <div class="container">
+
+        <div class="products-page-header">
+            <div>
+                <p class="section-label">THE SHOPPIX COLLECTION</p>
+
+                {% if selected_category %}
+                    <h1>{{ selected_category.name }}</h1>
+                    <p>Explore products in {{ selected_category.name }}.</p>
+                    <a href="{% url 'product_list' %}">← View All Products</a>
+                {% else %}
+                    <h1>Explore Our Products</h1>
+                    <p>Discover quality products and find something you'll love.</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="product-grid">
+
+            {% for product in products %}
+
+                <div class="product-card">
+
+                    <div class="product-image">
+
+                        {% if product.discount_price %}
+                            <span class="discount-badge">Special Price</span>
+                        {% endif %}
+
+                        {% if product.image %}
+                            <img src="{{ product.image.url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <span>🛍️</span>
+                                <p>No Image Available</p>
+                            </div>
+                        {% endif %}
+
+                    </div>
+
+                    <div class="product-card-content">
+
+                        <p class="product-category">
+                            {{ product.category.name }}
+                        </p>
+
+                        <h3>{{ product.name }}</h3>
+
+                        <div class="product-pricing">
+
+                            {% if product.discount_price %}
+                                <span class="product-price">
+                                    ₦{{ product.discount_price|floatformat:2 }}
+                                </span>
+
+                                <span class="old-price">
+                                    ₦{{ product.price|floatformat:2 }}
+                                </span>
+                            {% else %}
+                                <span class="product-price">
+                                    ₦{{ product.price|floatformat:2 }}
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                        <p class="product-seller">
+                            Sold by {{ product.seller.store_name }}
+                        </p>
+
+                        <a href="{% url 'product_detail' product.slug %}"
+                           class="view-product-btn">
+                            View Product →
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% empty %}
+
+                <div class="empty-products">
+                    <div class="empty-products-icon">🛍️</div>
+
+                    {% if selected_category %}
+                        <h3>No products in this category yet.</h3>
+                        <p>Please explore another category.</p>
+                        <a href="{% url 'product_list' %}">View All Products</a>
+                    {% else %}
+                        <h3>No products available yet.</h3>
+                        <p>We're preparing exciting products for you. Please check back soon!</p>
+                    {% endif %}
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

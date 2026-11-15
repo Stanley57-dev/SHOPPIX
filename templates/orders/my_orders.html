@@ -1,0 +1,110 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Orders | Shoppix{% endblock %}
+
+{% block content %}
+
+<section class="my-orders-page">
+    <div class="container">
+
+        <div class="my-orders-header">
+            <div>
+                <p class="section-label">SHOPPIX ACCOUNT</p>
+                <h1>My Orders</h1>
+                <p>Track and manage your purchases.</p>
+            </div>
+
+            <a href="{% url 'product_list' %}" class="orders-shop-btn">
+                Continue Shopping
+            </a>
+        </div>
+
+        {% if orders %}
+
+            <div class="orders-list">
+
+                {% for order in orders %}
+
+                    <div class="order-history-card">
+
+                        <div class="order-history-top">
+                            <div>
+                                <span>Order Reference</span>
+                                <strong>{{ order.order_number }}</strong>
+                            </div>
+
+                            <div>
+                                <span>Order Date</span>
+                                <strong>{{ order.created_at|date:"d M Y" }}</strong>
+                            </div>
+                        </div>
+
+
+
+                        <div class="order-history-items">
+
+                            {% for item in order.items.all %}
+                                <div class="order-history-item">
+                                    <div>
+                                        <h3>{{ item.product_name }}</h3>
+                                        <p>Quantity: {{ item.quantity }}</p>
+                                    </div>
+
+                                    <strong>
+                                        ₦{{ item.subtotal|floatformat:2 }}
+                                    </strong>
+                                </div>
+                            {% endfor %}
+
+                        </div>
+                        
+                      <div class="order-history-actions">
+                        <a href="{% url 'order_detail' order.id %}" class="view-order-btn">
+                            View Order Details →
+                        </a>
+                    </div>
+
+                        <div class="order-history-bottom">
+
+                            <div class="order-status-info">
+                                <span>Order Status</span>
+                                <strong>{{ order.get_status_display }}</strong>
+                            </div>
+
+                            <div class="order-status-info">
+                                <span>Payment</span>
+                                <strong>{{ order.get_payment_status_display }}</strong>
+                            </div>
+
+                            <div class="order-history-total">
+                                <span>Total Amount</span>
+                                <strong>₦{{ order.total_amount|floatformat:2 }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <div class="no-orders">
+                <div class="no-orders-icon">📦</div>
+                <h2>No Orders Yet</h2>
+                <p>You haven't placed any orders. Start shopping and your purchases will appear here.</p>
+
+                <a href="{% url 'product_list' %}" class="orders-shop-btn">
+                    Explore Products
+                </a>
+            </div>
+
+        {% endif %}
+
+    </div>
+</section>
+
+{% endblock %}

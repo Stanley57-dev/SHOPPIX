@@ -1,0 +1,391 @@
+
+{% extends "base.html" %}
+
+{% block title %}Checkout | Shopora{% endblock %}
+
+{% block content %}
+
+<section class="checkout-page">
+    <div class="container">
+
+        <div class="checkout-header">
+            <p class="section-label">SHOPORA CHECKOUT</p>
+            <h1>Complete Your Order</h1>
+            <p>Enter your delivery information to place your order.</p>
+        </div>
+
+        <div class="checkout-layout">
+
+            <!-- DELIVERY INFORMATION -->
+            <div class="checkout-form-container">
+
+                <h2>Delivery Information</h2>
+
+                <form method="POST">
+                    {% csrf_token %}
+
+                    <div class="checkout-field">
+                        <label for="full_name">Full Name</label>
+                        <input
+                            type="text"
+                            id="full_name"
+                            name="full_name"
+                            value="{{ request.user.get_full_name }}"
+                            placeholder="Enter your full name"
+                            required
+                        >
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="email">Email Address</label>
+                        <input
+                            type="email"
+                            id="email"
+                            name="email"
+                            value="{{ request.user.email }}"
+                            placeholder="Enter your email"
+                            required
+                        >
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="phone">Phone Number</label>
+                        <input
+                            type="tel"
+                            id="phone"
+                            name="phone"
+                            placeholder="Enter your phone number"
+                            required
+                        >
+                    </div>
+
+                    <div class="checkout-field">
+                        <label for="address">Delivery Address</label>
+                        <textarea
+                            id="address"
+                            name="address"
+                            rows="3"
+                            placeholder="House number, street name and area"
+                            required
+                        ></textarea>
+                    </div>
+
+                    <!-- STATE -->
+                    <div class="checkout-field">
+                        <label for="state">State</label>
+
+                        <select id="state" name="state" required>
+                            <option value="">Select your state</option>
+                            <option value="Abia">Abia</option>
+                            <option value="Adamawa">Adamawa</option>
+                            <option value="Akwa Ibom">Akwa Ibom</option>
+                            <option value="Anambra">Anambra</option>
+                            <option value="Bauchi">Bauchi</option>
+                            <option value="Bayelsa">Bayelsa</option>
+                            <option value="Benue">Benue</option>
+                            <option value="Borno">Borno</option>
+                            <option value="Cross River">Cross River</option>
+                            <option value="Delta">Delta</option>
+                            <option value="Ebonyi">Ebonyi</option>
+                            <option value="Edo">Edo</option>
+                            <option value="Ekiti">Ekiti</option>
+                            <option value="Enugu">Enugu</option>
+                            <option value="FCT">FCT (Abuja)</option>
+                            <option value="Gombe">Gombe</option>
+                            <option value="Imo">Imo</option>
+                            <option value="Jigawa">Jigawa</option>
+                            <option value="Kaduna">Kaduna</option>
+                            <option value="Kano">Kano</option>
+                            <option value="Katsina">Katsina</option>
+                            <option value="Kebbi">Kebbi</option>
+                            <option value="Kogi">Kogi</option>
+                            <option value="Kwara">Kwara</option>
+                            <option value="Lagos">Lagos</option>
+                            <option value="Nasarawa">Nasarawa</option>
+                            <option value="Niger">Niger</option>
+                            <option value="Ogun">Ogun</option>
+                            <option value="Ondo">Ondo</option>
+                            <option value="Osun">Osun</option>
+                            <option value="Oyo">Oyo</option>
+                            <option value="Plateau">Plateau</option>
+                            <option value="Rivers">Rivers</option>
+                            <option value="Sokoto">Sokoto</option>
+                            <option value="Taraba">Taraba</option>
+                            <option value="Yobe">Yobe</option>
+                            <option value="Zamfara">Zamfara</option>
+                        </select>
+                    </div>
+
+                    <!-- CITY -->
+                    <div class="checkout-field">
+                        <label for="city">City / Town</label>
+
+                        <input
+                            type="text"
+                            id="city"
+                            name="city"
+                            list="city-options"
+                            placeholder="Select your state first"
+                            disabled
+                            required
+                        >
+
+                        <datalist id="city-options"></datalist>
+                    </div>
+
+                    <!-- DELIVERY DATE -->
+                    <div class="checkout-field">
+                        <label for="requested_delivery_date">
+                            Preferred Delivery Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="requested_delivery_date"
+                            name="requested_delivery_date"
+                            required
+                        >
+
+                        <small>
+                            Choose your preferred delivery date.
+                            Shopora will review and confirm your request.
+                        </small>
+                    </div>
+
+                    <button type="submit" class="checkout-submit-btn">
+                        Proceed to Pay ₦<span id="button-total">{{ total|floatformat:2 }}</span>
+                    </button>
+
+                </form>
+
+            </div>
+
+            <!-- ORDER SUMMARY -->
+            <aside class="checkout-summary">
+
+                <h2>Your Order</h2>
+
+                {% for item in cart_items %}
+
+                    <div class="checkout-summary-item">
+
+                        <div>
+                            <h3>{{ item.product.name }}</h3>
+                            <p>Quantity: {{ item.quantity }}</p>
+                        </div>
+
+                        <strong>
+                            ₦{{ item.subtotal|floatformat:2 }}
+                        </strong>
+
+                    </div>
+
+                {% endfor %}
+
+                <div class="checkout-total">
+                    <span>Product Subtotal</span>
+                    <strong id="product-subtotal" data-total="{{ total }}">
+                        ₦{{ total|floatformat:2 }}
+                    </strong>
+                </div>
+
+                <div class="checkout-total">
+                    <span>Delivery Fee</span>
+                    <strong id="delivery-fee">₦0.00</strong>
+                </div>
+
+                <div class="checkout-total">
+                    <strong>Grand Total</strong>
+                    <strong id="grand-total">
+                        ₦{{ total|floatformat:2 }}
+                    </strong>
+                </div>
+
+                <p id="delivery-message" class="checkout-note">
+                    Select your state and city to calculate delivery.
+                </p>
+
+                <p class="checkout-note">
+                    Payment will be completed securely through Paystack.
+                </p>
+
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+
+
+<script>
+
+/* NIGERIAN CITIES */
+
+const citiesByState = {
+    "Abia": ["Umuahia", "Aba", "Ohafia", "Arochukwu"],
+    "Adamawa": ["Yola", "Mubi", "Numan", "Jimeta"],
+    "Akwa Ibom": ["Uyo", "Eket", "Ikot Ekpene", "Oron"],
+    "Anambra": ["Awka", "Onitsha", "Nnewi", "Ekwulobia"],
+    "Bauchi": ["Bauchi", "Azare", "Misau", "Jama'are"],
+    "Bayelsa": ["Yenagoa", "Ogbia", "Brass", "Nembe"],
+    "Benue": ["Makurdi", "Gboko", "Otukpo", "Katsina-Ala"],
+    "Borno": ["Maiduguri", "Biu", "Dikwa", "Bama"],
+    "Cross River": ["Calabar", "Ikom", "Ogoja", "Ugep"],
+    "Delta": ["Asaba", "Warri", "Sapele", "Ughelli", "Agbor"],
+    "Ebonyi": ["Ishieke", "Abakaliki", "Afikpo", "Onueke", "Ezza"],
+    "Edo": ["Benin City", "Auchi", "Ekpoma", "Uromi"],
+    "Ekiti": ["Ado-Ekiti", "Ikere-Ekiti", "Ilawe-Ekiti", "Ijero-Ekiti"],
+    "Enugu": ["Enugu", "Nsukka", "Agbani", "Udi"],
+    "FCT": ["Abuja", "Gwagwalada", "Kubwa", "Bwari", "Kuje", "Lugbe"],
+    "Gombe": ["Gombe", "Kaltungo", "Billiri", "Bajoga"],
+    "Imo": ["Owerri", "Orlu", "Okigwe", "Mbaise"],
+    "Jigawa": ["Dutse", "Hadejia", "Kazaure", "Gumel"],
+    "Kaduna": ["Kaduna", "Zaria", "Kafanchan", "Saminaka"],
+    "Kano": ["Kano", "Wudil", "Gwarzo", "Rano"],
+    "Katsina": ["Katsina", "Daura", "Funtua", "Malumfashi"],
+    "Kebbi": ["Birnin Kebbi", "Argungu", "Yauri", "Zuru"],
+    "Kogi": ["Lokoja", "Okene", "Idah", "Kabba"],
+    "Kwara": ["Ilorin", "Offa", "Jebba", "Lafiagi"],
+    "Lagos": ["Ikeja", "Lekki", "Victoria Island", "Ikorodu", "Epe", "Badagry", "Surulere", "Agege", "Festac", "Yaba", "Ojo"],
+    "Nasarawa": ["Lafia", "Keffi", "Karu", "Akwanga"],
+    "Niger": ["Minna", "Suleja", "Bida", "Kontagora"],
+    "Ogun": ["Abeokuta", "Ijebu Ode", "Sagamu", "Ota", "Ilaro"],
+    "Ondo": ["Akure", "Ondo", "Owo", "Ikare-Akoko"],
+    "Osun": ["Osogbo", "Ile-Ife", "Ilesa", "Ede", "Iwo"],
+    "Oyo": ["Ibadan", "Ogbomoso", "Oyo", "Iseyin", "Saki"],
+    "Plateau": ["Jos", "Bukuru", "Pankshin", "Shendam"],
+    "Rivers": ["Port Harcourt", "Obio-Akpor", "Bonny", "Eleme", "Omoku"],
+    "Sokoto": ["Sokoto", "Tambuwal", "Gwadabawa", "Illela"],
+    "Taraba": ["Jalingo", "Wukari", "Bali", "Takum"],
+    "Yobe": ["Damaturu", "Potiskum", "Gashua", "Nguru"],
+    "Zamfara": ["Gusau", "Kaura Namoda", "Talata Mafara", "Anka"]
+};
+
+
+/* ELEMENTS */
+
+const stateSelect = document.getElementById("state");
+const cityInput = document.getElementById("city");
+const cityOptions = document.getElementById("city-options");
+
+const deliveryFeeElement = document.getElementById("delivery-fee");
+const grandTotalElement = document.getElementById("grand-total");
+const buttonTotalElement = document.getElementById("button-total");
+const deliveryMessage = document.getElementById("delivery-message");
+
+const productTotal = parseFloat(
+    document.getElementById("product-subtotal").dataset.total
+) || 0;
+
+
+/* FORMAT NAIRA */
+
+function formatNaira(amount) {
+    return "₦" + amount.toLocaleString("en-NG", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+}
+
+
+/* CALCULATE DELIVERY FEE */
+
+function calculateDelivery() {
+
+    const state = stateSelect.value.trim().toLowerCase();
+    const city = cityInput.value.trim().toLowerCase();
+
+    let fee = 0;
+    let message = "Select your state and city to calculate delivery.";
+
+    if (state && city) {
+
+        if (state === "ebonyi") {
+
+            if (city === "ishieke") {
+                fee = 1500;
+                message = "Delivery within Ishieke, Ebonyi State.";
+            } else {
+                fee = 2500;
+                message = "Delivery to other locations in Ebonyi State.";
+            }
+
+        } else {
+
+            fee = 3500;
+            message = "Delivery outside Ebonyi State.";
+
+        }
+
+    }
+
+    const grandTotal = productTotal + fee;
+
+    deliveryFeeElement.textContent = formatNaira(fee);
+    grandTotalElement.textContent = formatNaira(grandTotal);
+    buttonTotalElement.textContent = grandTotal.toLocaleString("en-NG", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+
+    deliveryMessage.textContent = message;
+}
+
+
+/* STATE AND CITY SELECTION */
+
+stateSelect.addEventListener("change", function () {
+
+    const selectedState = this.value;
+
+    cityOptions.innerHTML = "";
+    cityInput.value = "";
+
+    if (selectedState && citiesByState[selectedState]) {
+
+        citiesByState[selectedState].forEach(function (city) {
+
+            const option = document.createElement("option");
+            option.value = city;
+
+            cityOptions.appendChild(option);
+
+        });
+
+        cityInput.disabled = false;
+        cityInput.placeholder = "Select or type your city";
+
+    } else {
+
+        cityInput.disabled = true;
+        cityInput.placeholder = "Select your state first";
+
+    }
+
+    calculateDelivery();
+
+});
+
+
+/* UPDATE FEE WHEN CITY CHANGES */
+
+cityInput.addEventListener("input", calculateDelivery);
+
+
+/* PREVENT PAST DELIVERY DATES */
+
+const deliveryDateInput = document.getElementById(
+    "requested_delivery_date"
+);
+
+const today = new Date();
+
+const localToday = new Date(
+    today.getTime() - today.getTimezoneOffset() * 60000
+).toISOString().split("T")[0];
+
+deliveryDateInput.min = localToday;
+
+</script>
+
+{% endblock %}

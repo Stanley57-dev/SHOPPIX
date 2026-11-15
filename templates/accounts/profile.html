@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+
+{% block title %}My Account | Shoppix{% endblock %}
+
+{% block content %}
+
+<section class="account-page">
+    <div class="container">
+
+        <div class="account-heading">
+            <p class="section-label">SHOPPIX ACCOUNT</p>
+            <h1>My Account</h1>
+            <p>Manage your personal information and orders.</p>
+        </div>
+
+        <div class="account-layout">
+
+            <div class="account-card account-profile-card">
+                <div class="account-avatar">
+                    {{ user.username|first|upper }}
+                </div>
+
+                <h2>{{ user.get_full_name|default:user.username }}</h2>
+                <p>{{ user.email|default:"No email address added" }}</p>
+
+                <span class="account-member-label">shoppix Customer</span>
+            </div>
+
+            <div class="account-card account-options-card">
+                <h2>Account Overview</h2>
+
+                <a href="{% url 'my_orders' %}" class="account-option">
+                    <span class="account-option-icon">📦</span>
+                    <span>
+                        <strong>My Orders</strong>
+                        <small>View and track your purchases</small>
+                    </span>
+                    <span class="account-arrow">›</span>
+                </a>
+
+                <a href="{% url 'password_change' %}" class="account-option">
+                    <span class="account-option-icon">🔒</span>
+                    <span>
+                        <strong>Change Password</strong>
+                        <small>Keep your account secure</small>
+                    </span>
+                    <span class="account-arrow">›</span>
+                </a>
+
+                <a href="{% url 'home' %}" class="account-option">
+                    <span class="account-option-icon">🛍️</span>
+                    <span>
+                        <strong>Continue Shopping</strong>
+                        <small>Discover more products on Shopora</small>
+                    </span>
+                    <span class="account-arrow">›</span>
+                </a>
+
+                <form method="POST" action="{% url 'logout' %}" class="account-logout-form">
+                    {% csrf_token %}
+                    <button type="submit" class="account-logout-button">
+                        Log Out
+                    </button>
+                </form>
+
+            </div>
+
+        </div>
+    </div>
+</section>
+
+{% endblock %}
