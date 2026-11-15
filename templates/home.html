@@ -7,6 +7,7 @@
 {% block content %}
 
 <!-- HERO SECTION -->
+
 <section class="shopora-hero">
     <div class="container">
         <div class="shopora-hero-main">
@@ -17,6 +18,7 @@
                     Find amazing products, explore your favourite categories
                     and enjoy a smarter shopping experience.
                 </p>
+
                 <a href="{% url 'product_list' %}" class="shopora-primary-btn">
                     Start Shopping <span>→</span>
                 </a>
@@ -26,18 +28,6 @@
                     <span>✓ Easy Shopping</span>
                     <span>✓ Secure Checkout</span>
                 </div>
-            </div>
-
-            <div class="shopora-hero-image">
-                {% if featured_products.0.image %}
-                    <img src="{{ featured_products.0.image.url }}"
-                         alt="{{ featured_products.0.name }}">
-                {% else %}
-                    <div class="hero-image-placeholder">
-                        <span>SHOPPIX</span>
-                        <p>Discover something amazing</p>
-                    </div>
-                {% endif %}
             </div>
         </div>
 
@@ -68,6 +58,9 @@
         </div>
     </div>
 </section>
+
+
+
 
 
 <!-- POPULAR CATEGORIES -->
