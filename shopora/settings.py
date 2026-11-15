@@ -26,6 +26,19 @@ ALLOWED_HOSTS = os.getenv(
     'localhost,127.0.0.1'
 ).split(',')
 
+CSRF_TRUSTED_ORIGINS = [
+    origin.strip()
+    for origin in os.getenv('CSRF_TRUSTED_ORIGINS', '').split(',')
+    if origin.strip()
+]
+
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+SESSION_COOKIE_SECURE = not DEBUG
+
+CSRF_COOKIE_SECURE = not DEBUG
+
+SECURE_SSL_REDIRECT = not DEBUG
 
 # Application definition
 
